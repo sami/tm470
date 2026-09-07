@@ -6,6 +6,7 @@ import {
   MORTAR_L_PER_M2_BRICK_SOLID, MORTAR_L_PER_M2_BRICK_FROGGED, MORTAR_L_PER_M2_BLOCK_100,
   DRY_SAND_PER_MORTAR, SAND_KG_PER_L, CEMENT_KG_PER_L, MIX_SAND_TO_CEMENT,
   SAND_BAG_KG, CEMENT_BAG_KG,
+  TIES_PER_M2, DPC_WIDTH_BRICK_MM, DPC_WIDTH_BLOCK_MM, DPC_ROLL_M,
 } from './constants';
 
 export function netArea(input: WallInput): number {
@@ -75,6 +76,38 @@ export function calculateWall(input: WallInput): WallResult {
     unit: 'bags',
     note: `about ${SAND_BAG_KG} kg per bag`,
   });
+
+  if (input.wallType === 'cavity') {
+    // EVR-M05: 2.5 per m2 of net wall, EVR-M08: no wastage, exact ceiling.
+    lines.push({
+      id: 'ties',
+      label: 'Wall ties, stainless, type 2',
+      quantity: Math.ceil(area * TIES_PER_M2),
+      unit: 'ties',
+      note: '900 x 450 mm staggered centres',
+    });
+  }
+
+  // EVR-M33: one damp-proof course line per leaf width; never merged into one roll count.
+  const dpcRolls = Math.ceil(input.lengthM / DPC_ROLL_M);
+  if (hasBrickLeaf) {
+    lines.push({
+      id: `dpc-${DPC_WIDTH_BRICK_MM}`,
+      label: `Damp-proof course, ${DPC_WIDTH_BRICK_MM} mm x ${DPC_ROLL_M} m`,
+      quantity: dpcRolls,
+      unit: 'rolls',
+      note: 'brick leaf, 102.5 mm, next stocked width up',
+    });
+  }
+  if (hasBlockLeaf) {
+    lines.push({
+      id: `dpc-${DPC_WIDTH_BLOCK_MM}`,
+      label: `Damp-proof course, ${DPC_WIDTH_BLOCK_MM} mm x ${DPC_ROLL_M} m`,
+      quantity: dpcRolls,
+      unit: 'rolls',
+      note: 'block leaf, 100 mm',
+    });
+  }
 
   return {
     netAreaM2: area,

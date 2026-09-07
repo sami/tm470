@@ -18,6 +18,7 @@ const F1: WallInput = {
 };
 
 const F3: WallInput = { ...defaults, wallType: 'brick-single', lengthM: 5, heightM: 2.5, openings: [] };
+const F2: WallInput = { ...defaults, wallType: 'cavity', lengthM: 6, heightM: 2.4, openings: [] };
 
 function line(result: ReturnType<typeof calculateWall>, id: string) {
   const found = result.lines.find((l) => l.id === id);
@@ -56,5 +57,36 @@ describe('mortar chain', () => {
     expect(line(r, 'sand').quantity).toBe(1);
     expect(line(r, 'cement').quantity).toBe(6);
     expect(line(r, 'bricks').quantity).toBe(701);
+  });
+});
+
+describe('cavity wall (F2)', () => {
+  it('951 bricks, 152 blocks, 36 ties', () => {
+    const r = calculateWall(F2);
+    expect(line(r, 'bricks').quantity).toBe(951);
+    expect(line(r, 'blocks').quantity).toBe(152);
+    expect(line(r, 'ties').quantity).toBe(36);
+  });
+  it('665.28 litres of mortar from both leaves, 2 sand bags, 10 cement bags', () => {
+    const r = calculateWall(F2);
+    expect(r.working.mortarLitres).toBeCloseTo(665.28, 2);
+    expect(line(r, 'sand').quantity).toBe(2);
+    expect(line(r, 'cement').quantity).toBe(10);
+  });
+  it('two damp-proof course lines, one per width, never merged', () => {
+    const r = calculateWall(F2);
+    const dpc = r.lines.filter((l) => l.id.startsWith('dpc-'));
+    expect(dpc).toHaveLength(2);
+    expect(line(r, 'dpc-112').quantity).toBe(1);
+    expect(line(r, 'dpc-100').quantity).toBe(1);
+  });
+  it('a single brick wall has no ties and one damp-proof course line', () => {
+    const r = calculateWall(F1);
+    expect(r.lines.some((l) => l.id === 'ties')).toBe(false);
+    expect(r.lines.filter((l) => l.id.startsWith('dpc-'))).toHaveLength(1);
+  });
+  it('no two lines share an id (EVR-P09 guard)', () => {
+    const ids = calculateWall(F2).lines.map((l) => l.id);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 });
