@@ -40,3 +40,21 @@ describe('net area and unit counts', () => {
     expect(r.lines.some((l) => l.id === 'bricks')).toBe(false);
   });
 });
+
+describe('mortar chain', () => {
+  it('F1: 350.13 litres of mortar, 1 sand bag, 6 cement bags', () => {
+    const r = calculateWall(F1);
+    expect(r.working.mortarLitres).toBeCloseTo(350.13, 2);
+    expect(r.working.sandKg).toBeCloseTo(700.26, 2);
+    expect(r.working.cementKg).toBeCloseTo(126.05, 2);
+    expect(line(r, 'sand').quantity).toBe(1);
+    expect(line(r, 'cement').quantity).toBe(6);
+  });
+  it('F5: frogged bricks raise mortar to 408.485 litres, bags unchanged', () => {
+    const r = calculateWall({ ...F1, brickForm: 'frogged' });
+    expect(r.working.mortarLitres).toBeCloseTo(408.485, 3);
+    expect(line(r, 'sand').quantity).toBe(1);
+    expect(line(r, 'cement').quantity).toBe(6);
+    expect(line(r, 'bricks').quantity).toBe(701);
+  });
+});
