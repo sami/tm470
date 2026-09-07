@@ -1,0 +1,61 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  crumb?: string;
+}
+const { title, crumb } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" />
+  </head>
+  <body>
+    <div class="demo-banner" role="note">
+      Demonstrator only. Not affiliated with, or endorsed by, Selco Builders Warehouse.
+      Built by a member of staff as a university project to show what a materials calculator could do.
+    </div>
+
+    <header class="site-header">
+      <div class="wrap">
+        <a class="wordmark" href={`${base}/`}>Trade Materials Calculator</a>
+        <span class="tag">Demonstrator</span>
+      </div>
+    </header>
+
+    <nav class="site-nav" aria-label="Calculators">
+      <div class="wrap">
+        <ul>
+          <li><a href={`${base}/`}>Home</a></li>
+          <li><a href={`${base}/masonry-wall/`}>Masonry wall</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main class="wrap">
+      {crumb && (
+        <p class="crumbs">
+          <a href={`${base}/`}>Home</a> / {crumb}
+        </p>
+      )}
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <p>
+          Quantities are estimates based on standard practice. Check coverage and your own
+          site conditions before ordering, and have structural work checked by someone qualified.
+        </p>
+        <p>Student project, Open University TM470, 2026. Not a Selco Builders Warehouse service.</p>
+      </div>
+    </footer>
+  </body>
+</html>

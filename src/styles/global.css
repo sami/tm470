@@ -1,0 +1,99 @@
+:root {
+  --navy: #04204b;
+  --blue: #253081;
+  --yellow: #ffd407;
+  --grey: #f2f6fa;
+  --ink: #1f2933;
+  --muted: #5b6673;
+  --line: #d9dee5;
+  --error: #b42318;
+  --font: 'Open Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html { font-family: var(--font); color: var(--ink); background: #fff; }
+body { margin: 0; line-height: 1.5; }
+
+.demo-banner {
+  background: var(--navy);
+  color: #fff;
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 0.5rem 1rem;
+}
+
+.site-header {
+  background: var(--yellow);
+  padding: 1rem;
+}
+.site-header .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.wordmark {
+  color: var(--navy);
+  font-weight: 800;
+  font-size: 1.25rem;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+.tag {
+  background: var(--navy);
+  color: var(--yellow);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+}
+
+.site-nav {
+  background: var(--navy);
+}
+.site-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 1.5rem;
+}
+.site-nav a {
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.9rem 0;
+}
+.site-nav a:hover, .site-nav a:focus { color: var(--yellow); }
+
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 1rem; }
+
+.crumbs { font-size: 0.85rem; color: var(--muted); margin: 1rem 0; }
+.crumbs a { color: var(--navy); }
+
+main { min-height: 60vh; }
+
+h1 {
+  color: var(--navy);
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.site-footer {
+  background: var(--navy);
+  color: #fff;
+  margin-top: 3rem;
+  padding: 1.5rem 1rem;
+  font-size: 0.85rem;
+}
+.site-footer p { margin: 0.25rem 0; }
+.site-footer a { color: var(--yellow); }
