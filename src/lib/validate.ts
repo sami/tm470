@@ -24,8 +24,11 @@ function wastage(value: number, name: string): void {
 export function validate(input: WallInput): void {
   positiveNumber(input.lengthM, 'Wall length');
   positiveNumber(input.heightM, 'Wall height');
-  wastage(input.brickWastePct, 'Brick wastage');
-  wastage(input.blockWastePct, 'Block wastage');
+
+  const hasBrickLeaf = input.wallType !== 'block-single';
+  const hasBlockLeaf = input.wallType !== 'brick-single';
+  if (hasBrickLeaf) wastage(input.brickWastePct, 'Brick wastage');
+  if (hasBlockLeaf) wastage(input.blockWastePct, 'Block wastage');
   wastage(input.mortarWastePct, 'Mortar wastage');
 
   const gross = input.lengthM * input.heightM;

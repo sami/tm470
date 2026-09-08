@@ -35,4 +35,13 @@ describe('validate (F4)', () => {
   it('accepts a sensible wall', () => {
     expect(() => validate(base)).not.toThrow();
   });
+  it('a block wall is not refused for a brick wastage it does not use', () => {
+    expect(() => validate({ ...base, wallType: 'block-single', brickWastePct: 99 })).not.toThrow();
+  });
+  it('a brick wall is still refused for a brick wastage above the bound', () => {
+    expect(() => validate({ ...base, wallType: 'brick-single', brickWastePct: 99 })).toThrow(WallInputError);
+  });
+  it('a brick wall is not refused for a block wastage it does not use', () => {
+    expect(() => validate({ ...base, wallType: 'brick-single', blockWastePct: 99 })).not.toThrow();
+  });
 });
