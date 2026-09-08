@@ -90,3 +90,24 @@ describe('cavity wall (F2)', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 });
+
+describe('units read as a builder would say them', () => {
+  it('a single bag is "1 bag", not "1 bags"', () => {
+    const r = calculateWall(F1);
+    expect(line(r, 'sand').quantity).toBe(1);
+    expect(line(r, 'sand').unit).toBe('bag');
+  });
+  it('more than one bag is "bags"', () => {
+    const r = calculateWall(F2);
+    expect(line(r, 'sand').quantity).toBe(2);
+    expect(line(r, 'sand').unit).toBe('bags');
+  });
+  it('a single damp-proof course roll is "1 roll"', () => {
+    expect(line(calculateWall(F1), 'dpc-112').unit).toBe('roll');
+  });
+  it('no label repeats its unit', () => {
+    for (const l of calculateWall(F2).lines.filter((l) => ['bag', 'roll'].includes(l.unit.replace(/s$/, '')))) {
+      expect(l.label.toLowerCase()).not.toContain(l.unit.replace(/s$/, ''));
+    }
+  });
+});

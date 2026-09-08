@@ -20,6 +20,11 @@ function mortarLitres(areaM2: number, ratePerM2: number, wastePct: number): numb
   return (areaM2 * ratePerM2 * (100 + wastePct)) / 100;
 }
 
+// A builder asks for one bag, not one bags. The engine decides the word, not the page.
+function unit(quantity: number, singular: string): string {
+  return quantity === 1 ? singular : `${singular}s`;
+}
+
 export function calculateWall(input: WallInput): WallResult {
   validate(input);
   const area = netArea(input);
@@ -29,20 +34,22 @@ export function calculateWall(input: WallInput): WallResult {
   const hasBlockLeaf = input.wallType !== 'brick-single';
 
   if (hasBrickLeaf) {
+    const brickQty = ceilAfterWastage(area, BRICKS_PER_M2, input.brickWastePct);
     lines.push({
       id: 'bricks',
       label: 'Facing bricks, 65 mm',
-      quantity: ceilAfterWastage(area, BRICKS_PER_M2, input.brickWastePct),
-      unit: 'bricks',
+      quantity: brickQty,
+      unit: unit(brickQty, 'brick'),
       note: `${BRICKS_PER_M2} per m2 plus ${input.brickWastePct}% wastage`,
     });
   }
   if (hasBlockLeaf) {
+    const blockQty = ceilAfterWastage(area, BLOCKS_PER_M2, input.blockWastePct);
     lines.push({
       id: 'blocks',
       label: 'Concrete blocks, 100 mm',
-      quantity: ceilAfterWastage(area, BLOCKS_PER_M2, input.blockWastePct),
-      unit: 'blocks',
+      quantity: blockQty,
+      unit: unit(blockQty, 'block'),
       note: `${BLOCKS_PER_M2} per m2 plus ${input.blockWastePct}% wastage`,
     });
   }
@@ -62,28 +69,31 @@ export function calculateWall(input: WallInput): WallResult {
   const cementLitres = drySandLitres / MIX_SAND_TO_CEMENT;
   const cementKg = cementLitres * CEMENT_KG_PER_L;
 
+  const cementBags = Math.ceil(cementKg / CEMENT_BAG_KG);
   lines.push({
     id: 'cement',
-    label: 'Cement, 25 kg bags',
-    quantity: Math.ceil(cementKg / CEMENT_BAG_KG),
-    unit: 'bags',
+    label: 'Cement, 25 kg',
+    quantity: cementBags,
+    unit: unit(cementBags, 'bag'),
     note: '1:5 mix by volume (EVR-M15)',
   });
+  const sandBags = Math.ceil(sandKg / SAND_BAG_KG);
   lines.push({
     id: 'sand',
-    label: 'Building sand, jumbo bags',
-    quantity: Math.ceil(sandKg / SAND_BAG_KG),
-    unit: 'bags',
+    label: 'Building sand, jumbo',
+    quantity: sandBags,
+    unit: unit(sandBags, 'bag'),
     note: `about ${SAND_BAG_KG} kg per bag`,
   });
 
   if (input.wallType === 'cavity') {
     // EVR-M05: 2.5 per m2 of net wall, EVR-M08: no wastage, exact ceiling.
+    const tiesQty = Math.ceil(area * TIES_PER_M2);
     lines.push({
       id: 'ties',
       label: 'Wall ties, stainless, type 2',
-      quantity: Math.ceil(area * TIES_PER_M2),
-      unit: 'ties',
+      quantity: tiesQty,
+      unit: unit(tiesQty, 'tie'),
       note: '900 x 450 mm staggered centres',
     });
   }
@@ -95,7 +105,7 @@ export function calculateWall(input: WallInput): WallResult {
       id: `dpc-${DPC_WIDTH_BRICK_MM}`,
       label: `Damp-proof course, ${DPC_WIDTH_BRICK_MM} mm x ${DPC_ROLL_M} m`,
       quantity: dpcRolls,
-      unit: 'rolls',
+      unit: unit(dpcRolls, 'roll'),
       note: 'brick leaf, 102.5 mm, next stocked width up',
     });
   }
@@ -104,7 +114,7 @@ export function calculateWall(input: WallInput): WallResult {
       id: `dpc-${DPC_WIDTH_BLOCK_MM}`,
       label: `Damp-proof course, ${DPC_WIDTH_BLOCK_MM} mm x ${DPC_ROLL_M} m`,
       quantity: dpcRolls,
-      unit: 'rolls',
+      unit: unit(dpcRolls, 'roll'),
       note: 'block leaf, 100 mm',
     });
   }
